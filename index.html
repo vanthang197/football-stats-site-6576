@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<title>Football Analytics Dashboard</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="navbar">
+
+<h2>⚽ Vietnam Advanced Stats</h2>
+
+<div class="nav-links">
+<a href="index.html">Stats</a>
+<a href="about.html">About</a>
+</div>
+
+</div>
+
+<div class="container">
+
+<div class="filters">
+
+<input type="text" id="searchPlayer" placeholder="Search player...">
+
+<select id="positionFilter">
+<option value="all">All League</option>
+<option value="GK">V-League 1</option>
+<option value="DEF">V-League 2</option>
+<option value="MID">Youth-U</option>
+</select>
+
+<select id="teamFilter">
+<option value="all">All Teams</option>
+</select>
+
+<select id="positionFilter">
+<option value="all">All Positions</option>
+<option value="GK">GK</option>
+<option value="DEF">DEF</option>
+<option value="MID">MID</option>
+<option value="FWD">FWD</option>
+</select>
+
+</div>
+
+<div class="table-wrapper">
+<div class="table-container">
+<table id="statsTable">
+<thead>
+<tr>
+
+<th>Team</th>
+<th>Player</th>
+<th>Pos</th>
+<th>Number</th>
+<th class="sortable">Height</th>
+<th class="sortable">Weight</th>
+<th class="sortable">Năm sinh</th>
+<th class="sortable">G</th>
+<th class="sortable">OG</th>
+<th class="sortable">PEN</th>
+<th class="sortable">YC</th>
+<th class="sortable">RC</th>
+<th class="sortable">M</th>
+<th class="sortable">A</th>
+<th class="sortable">S</th>
+<th class="sortable">SOT</th>
+<th class="sortable">KP</th>
+<th class="sortable">T</th>
+<th class="sortable">INT</th>
+
+<th class="sortable">G/90</th>
+<th class="sortable">A/90</th>
+<th class="sortable">S/90</th>
+
+</tr>
+</thead>
+
+<tbody>
+</tbody>
+
+</table>
+
+</thead>
+
+<tbody></tbody>
+
+</table>
+
+</div>
+</div>
+</div>
+<script src="script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,33 @@
+[
+{
+"name":"Erling Haaland",
+"team":"Man City",
+"position":"FWD",
+"minutes":2340,
+"goals":26,
+"assists":5,
+"shots":110,
+"sot":60,
+"key_pass":30,
+"tackles":5,
+"interceptions":2,
+"yellow":1,
+"red":0
+},
+
+{
+"name":"Bruno Fernandes",
+"team":"Man Utd",
+"position":"MID",
+"minutes":2200,
+"goals":10,
+"assists":12,
+"shots":60,
+"sot":30,
+"key_pass":85,
+"tackles":40,
+"interceptions":15,
+"yellow":5,
+"red":0
+}
+]

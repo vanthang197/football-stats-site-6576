@@ -1,0 +1,213 @@
+body{
+font-family:'Montserrat',sans-serif;
+margin:0;
+background:#f4f6f8;
+color:#1e293b;
+}
+
+/* CONTAINER */
+
+.container{
+max-width:1200px;
+margin:auto;
+padding:20px;
+}
+
+/* NAVBAR */
+
+.navbar{
+
+background:#1e293b;
+color:white;
+
+padding:10px 20px;   /* nhỏ hơn */
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+}
+
+.navbar h2{
+font-size:18px;
+margin:0;
+}
+
+.nav-links a{
+
+color:white;
+margin-left:18px;
+font-size:14px;
+text-decoration:none;
+font-weight:500;
+
+}
+
+.nav-links a:hover{
+opacity:0.8;
+}
+
+/* FILTERS */
+
+.filters{
+
+padding:15px;
+background:white;
+
+display:flex;
+gap:10px;
+
+border-bottom:1px solid #eee;
+
+}
+
+.filters input, .filters select{
+
+padding:8px;
+border-radius:6px;
+border:1px solid #ddd;
+
+}
+
+/* ============================= */
+/* TABLE CONTAINER */
+/* ============================= */
+
+.table-wrapper{
+background:white;
+border-radius:10px;
+box-shadow:0 3px 8px rgba(0,0,0,0.08);
+margin-top:20px;
+
+max-height:600px;
+overflow:auto;
+}
+
+/* ============================= */
+/* TABLE */
+/* ============================= */
+
+#statsTable{
+border-collapse:collapse;
+width:100%;
+min-width:1400px;
+font-size:13px;
+white-space:nowrap;
+}
+
+/* ============================= */
+/* HEADER */
+/* ============================= */
+
+#statsTable thead th{
+background:#0f172a;
+color:white;
+padding:10px;
+font-weight:500;
+
+position:sticky;
+top:0;
+
+z-index:100;
+}
+
+#statsTable thead th:nth-child(1){
+left:0;
+z-index:110;
+}
+
+#statsTable thead th:nth-child(2){
+left:180px;
+z-index:109;
+}
+
+/* ============================= */
+/* BODY */
+/* ============================= */
+
+#statsTable td{
+padding:10px;
+border-bottom:1px solid #eee;
+}
+
+/* ============================= */
+/* HOVER ROW */
+/* ============================= */
+
+#statsTable tbody tr:hover td{
+background:#e2e8f0;
+}
+
+/* ============================= */
+/* Team COLUMN */
+/* ============================= */
+
+#statsTable th:nth-child(1),
+#statsTable td:nth-child(1){
+
+position:sticky;
+left:0;
+max-width: 200px;
+background:#1D4586;
+color:white;
+z-index:50;
+}
+
+/* ============================= */
+/* Player COLUMN */
+/* ============================= */
+
+#statsTable th:nth-child(2),
+#statsTable td:nth-child(2){
+
+position:sticky;
+left:180px;
+max-width: 220px;
+background:#285CA9;
+color:white;
+z-index:49;
+}
+
+/* ============================= */
+/* HOVER FIX FOR STICKY */
+/* ============================= */
+
+#statsTable tbody tr:hover td:nth-child(1),
+#statsTable tbody tr:hover td:nth-child(2){
+background:#2a3b57;
+color:white;
+}
+
+/* ============================= */
+/* SORT ICON */
+/* ============================= */
+
+th.sortable{
+cursor:pointer;
+position:relative;
+}
+
+th.sortable::after{
+content:"⇅";
+font-size:11px;
+margin-left:6px;
+opacity:0;
+}
+
+th.sortable:hover::after{
+opacity:1;
+}
+
+/* ============================= */
+/* SCROLL BAR */
+/* ============================= */
+
+.table-wrapper::-webkit-scrollbar{
+height:8px;
+width:8px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb{
+background:#94a3b8;
+border-radius:5px;
+}
