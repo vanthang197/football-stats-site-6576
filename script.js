@@ -13,6 +13,7 @@ function safeValue(v){
     return v.trim();
 }
 
+
 fetch(sheetURL)
 .then(res => res.text())
 .then(csv => {
