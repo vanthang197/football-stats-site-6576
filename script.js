@@ -327,7 +327,7 @@ const columnKeys = [
 const headers = table.querySelectorAll("thead th");
 
 headers.forEach((header, index) => {
-    if(index < 3) return;
+    if(index < 0) return;
     header.style.cursor = "pointer";
     header.addEventListener("click", () => {
         const key = columnKeys[index];
