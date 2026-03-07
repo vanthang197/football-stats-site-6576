@@ -13,7 +13,6 @@ margin:auto;
 padding:20px;
 }
 
-
 /* NAVBAR */
 
 .navbar{
@@ -118,7 +117,7 @@ z-index:110;
 }
 
 #statsTable thead th:nth-child(2){
-left:180px;
+left:200px;
 z-index:109;
 }
 
@@ -148,8 +147,8 @@ background:#e2e8f0;
 
 position:sticky;
 left:0;
-min-width: 190px;
-max-width: 190px;
+min-width: 180px;
+max-width: 180px;
 background:#1D4586;
 color:white;
 z-index:50;
@@ -163,11 +162,14 @@ z-index:50;
 #statsTable td:nth-child(2){
 
 position:sticky;
-left:180px;
-min-width: 200px;
-max-width: 220px;
+left:200px;
+
+min-width:200px;
+max-width:220px;
+
 background:#285CA9;
 color:white;
+
 z-index:49;
 }
 
@@ -286,4 +288,16 @@ border-radius:5px;
 
 .pos-actions span:hover {
     text-decoration: underline;
+}
+
+/* ============================= */
+/* ADVANCED STATS COLOR */
+/* ============================= */
+
+#statsTable th:nth-child(n+13),
+#statsTable td:nth-child(n+13){
+
+background:#eef2ff;
+color:#0f172a;
+border-left:1px solid #dbeafe;
 }
