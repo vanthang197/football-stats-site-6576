@@ -7,9 +7,7 @@ let players = [];
 let sortDirection = 1;
 
 function safeValue(v){
-    if(v === "" || v === undefined || v === null){
-        return "--";
-    }
+    if(v === "" || v === undefined || v === null) return "--";
     return v.trim();
 }
 
@@ -17,53 +15,49 @@ fetch(sheetURL)
 .then(res => res.text())
 .then(csv => {
 
-    const rows = csv.split("\n").slice(1);
+    const allRows = csv.split("\n");
+    const headers = allRows[0].split(",").map(h => h.trim());
 
-    rows.forEach(row => {
+// Tự render header từ Sheets — bỏ 2 cột đầu
+const headerRow = document.getElementById("tableHeader");
+headers.slice(2).forEach((h, i, arr) => {
+    const th = document.createElement("th");
+    th.className = "sortable";
+    th.textContent = h;
+    headerRow.appendChild(th);
+
+
+    // Chèn cột Tuổi ngay sau Năm sinh
+    if (h === arr.length - 1) {
+        const thTuoi = document.createElement("th");
+        thTuoi.className = "sortable";
+        thTuoi.textContent = "Tuổi";
+        headerRow.appendChild(thTuoi);
+    }
+});
+
+    // Đọc data — mỗi player là object với key = tên cột Sheets
+    allRows.slice(1).forEach(row => {
+        if (!row.trim()) return;
         const cols = row.split(",");
+        const player = {};
+        headers.forEach((h, i) => {
+            player[h] = safeValue(cols[i]);
+        });
 
-        const player = {
-            STT:    safeValue(cols[0]),
-            Season: safeValue(cols[1]),
-            League: safeValue(cols[2]),
-            Team:   safeValue(cols[3]),
-            Player: safeValue(cols[4]),
-            Pos:    safeValue(cols[5]),
-            No:     safeValue(cols[6]),
-            Height: safeValue(cols[7]),
-            Weight: safeValue(cols[8]),
-            Birth:  safeValue(cols[9]),
-            Age: (() => {
-                const raw = cols[9] ? cols[9].trim() : "";
-                if (!raw || raw === "--") return "--";
-                let year;
-                if (/^\d{4}$/.test(raw)) {
-                    year = parseInt(raw);
-                } else {
-                    const parts = raw.split(/[-\/]/);
-                    if (parts.length === 3) {
-                        year = parseInt(parts[0]) > 31 ? parseInt(parts[0]) : parseInt(parts[2]);
-                    }
-                }
-                if (!year || isNaN(year)) return "--";
-                return new Date().getFullYear() - year;
-            })(),
-            G:   safeValue(cols[10]),
-            OG:  safeValue(cols[11]),
-            PEN: safeValue(cols[12]),
-            YC:  safeValue(cols[13]),
-            RC:  safeValue(cols[14]),
-            M:   safeValue(cols[15]),
-            A:   safeValue(cols[16]),
-            S:   safeValue(cols[17]),
-            SOT: safeValue(cols[18]),
-            KP:  safeValue(cols[19]),
-            T:   safeValue(cols[20]),
-            INT: safeValue(cols[21]),
-            G90: safeValue(cols[22]),
-            A90: safeValue(cols[23]),
-            S90: safeValue(cols[24])
-        };
+        // Tính tuổi từ cột "Năm sinh"
+        const birth = player["Năm sinh"] || "";
+        player["Tuổi"] = (() => {
+            if (!birth || birth === "--") return "--";
+            let year;
+            if (/^\d{4}$/.test(birth)) year = parseInt(birth);
+            else {
+                const parts = birth.split(/[-\/]/);
+                if (parts.length === 3)
+                    year = parseInt(parts[0]) > 31 ? parseInt(parts[0]) : parseInt(parts[2]);
+            }
+            return (!year || isNaN(year)) ? "--" : new Date().getFullYear() - year;
+        })();
 
         players.push(player);
     });
@@ -72,7 +66,19 @@ fetch(sheetURL)
     initLeagueFilter();
     initTeamFilter();
     initPositionFilter();
-    applyFilters();
+// Sort mặc định theo Goal giảm dần
+// Thêm header Tuổi vào cuối vì data cũng có Tuổi ở cuối
+const thTuoi = document.createElement("th");
+thTuoi.className = "sortable";
+thTuoi.textContent = "Tuổi";
+document.getElementById("tableHeader").appendChild(thTuoi);
+players.sort((a, b) => {
+    const A = isNaN(a["G"]) ? -1 : Number(a["G"]);
+    const B = isNaN(b["G"]) ? -1 : Number(b["G"]);
+    return B - A;
+});
+
+applyFilters();
 });
 
 // =====================
@@ -81,7 +87,7 @@ fetch(sheetURL)
 const defaultSeason = "25/26";
 
 function initSeasonFilter() {
-    const seasons = [...new Set(players.map(p => p.Season).filter(s => s && s !== "--"))].sort().reverse();
+    const seasons = [...new Set(players.map(p => p["Mùa giải"]).filter(s => s && s !== "--"))].sort().reverse();
     const menu = document.getElementById("seasonDropdownMenu");
     menu.innerHTML = "";
     const actions = document.createElement("div");
@@ -99,7 +105,6 @@ function initSeasonFilter() {
 function getSelectedSeasons() {
     return [...document.querySelectorAll("#seasonDropdownMenu input[type=checkbox]:checked")].map(cb => cb.value);
 }
-
 function selectAllSeason() {
     document.querySelectorAll("#seasonDropdownMenu input[type=checkbox]").forEach(cb => cb.checked = true);
     applyFilters();
@@ -108,7 +113,6 @@ function clearAllSeason() {
     document.querySelectorAll("#seasonDropdownMenu input[type=checkbox]").forEach(cb => cb.checked = false);
     applyFilters();
 }
-
 document.getElementById("seasonDropdownBtn").addEventListener("click", (e) => {
     e.stopPropagation();
     closeAllDropdowns("seasonDropdownMenu");
@@ -121,7 +125,7 @@ document.getElementById("seasonDropdownBtn").addEventListener("click", (e) => {
 const defaultLeagues = ["V-League 1", "V-League 2"];
 
 function initLeagueFilter() {
-    const leagues = [...new Set(players.map(p => p.League).filter(l => l && l !== "--"))].sort();
+    const leagues = [...new Set(players.map(p => p["Giải đấu"]).filter(l => l && l !== "--"))].sort();
     const menu = document.getElementById("leagueDropdownMenu");
     menu.innerHTML = "";
     const actions = document.createElement("div");
@@ -139,7 +143,6 @@ function initLeagueFilter() {
 function getSelectedLeagues() {
     return [...document.querySelectorAll("#leagueDropdownMenu input[type=checkbox]:checked")].map(cb => cb.value);
 }
-
 function selectAllLeague() {
     document.querySelectorAll("#leagueDropdownMenu input[type=checkbox]").forEach(cb => cb.checked = true);
     applyFilters();
@@ -148,7 +151,6 @@ function clearAllLeague() {
     document.querySelectorAll("#leagueDropdownMenu input[type=checkbox]").forEach(cb => cb.checked = false);
     applyFilters();
 }
-
 document.getElementById("leagueDropdownBtn").addEventListener("click", (e) => {
     e.stopPropagation();
     closeAllDropdowns("leagueDropdownMenu");
@@ -159,7 +161,7 @@ document.getElementById("leagueDropdownBtn").addEventListener("click", (e) => {
 // TEAM FILTER
 // =====================
 function initTeamFilter() {
-    const teams = [...new Set(players.map(p => p.Team).filter(t => t && t !== "--"))].sort();
+    const teams = [...new Set(players.map(p => p["Team"]).filter(t => t && t !== "--"))].sort();
     const menu = document.getElementById("teamDropdownMenu");
     menu.innerHTML = "";
     const actions = document.createElement("div");
@@ -176,7 +178,6 @@ function initTeamFilter() {
 function getSelectedTeams() {
     return [...document.querySelectorAll("#teamDropdownMenu input[type=checkbox]:checked")].map(cb => cb.value);
 }
-
 function selectAllTeam() {
     document.querySelectorAll("#teamDropdownMenu input[type=checkbox]").forEach(cb => cb.checked = true);
     applyFilters();
@@ -185,7 +186,6 @@ function clearAllTeam() {
     document.querySelectorAll("#teamDropdownMenu input[type=checkbox]").forEach(cb => cb.checked = false);
     applyFilters();
 }
-
 document.getElementById("teamDropdownBtn").addEventListener("click", (e) => {
     e.stopPropagation();
     closeAllDropdowns("teamDropdownMenu");
@@ -199,12 +199,11 @@ const defaultPositions = ["Thủ môn", "Hậu vệ", "Tiền vệ", "Tiền đ�
 
 function initPositionFilter() {
     const priority = ["Thủ môn", "Hậu vệ", "Tiền vệ", "Tiền đạo"];
-    const allRaw = [...new Set(players.map(p => p.Pos).filter(p => p && p !== "--"))];
+    const allRaw = [...new Set(players.map(p => p["Pos"]).filter(p => p && p !== "--"))];
     const allPositions = [
         ...priority.filter(p => allRaw.includes(p)),
         ...allRaw.filter(p => !priority.includes(p)).sort()
     ];
-
     const menu = document.getElementById("posDropdownMenu");
     menu.innerHTML = "";
     const actions = document.createElement("div");
@@ -222,7 +221,6 @@ function initPositionFilter() {
 function getSelectedPositions() {
     return [...document.querySelectorAll("#posDropdownMenu input[type=checkbox]:checked")].map(cb => cb.value);
 }
-
 function selectAllPos() {
     document.querySelectorAll("#posDropdownMenu input[type=checkbox]").forEach(cb => cb.checked = true);
     applyFilters();
@@ -231,7 +229,6 @@ function clearAllPos() {
     document.querySelectorAll("#posDropdownMenu input[type=checkbox]").forEach(cb => cb.checked = false);
     applyFilters();
 }
-
 document.getElementById("posDropdownBtn").addEventListener("click", (e) => {
     e.stopPropagation();
     closeAllDropdowns("posDropdownMenu");
@@ -246,7 +243,6 @@ function closeAllDropdowns(except) {
         if (id !== except) document.getElementById(id).classList.remove("open");
     });
 }
-
 document.addEventListener("click", () => {
     ["seasonDropdownMenu","leagueDropdownMenu","teamDropdownMenu","posDropdownMenu"].forEach(id => {
         document.getElementById(id).classList.remove("open");
@@ -264,50 +260,32 @@ function applyFilters() {
     const selectedPos = getSelectedPositions();
 
     const filtered = players.filter(p => {
-        const matchSearch = p.Player.toLowerCase().includes(search);
-        const matchSeason = selectedSeasons.includes(p.Season);
-        const matchLeague = selectedLeagues.includes(p.League);
-        const matchTeam = selectedTeams.includes(p.Team);
-        const matchPos = selectedPos.includes(p.Pos);
+        const matchSearch = (p["Player"] || "").toLowerCase().includes(search);
+        const matchSeason = selectedSeasons.includes(p["Mùa giải"]);
+        const matchLeague = selectedLeagues.includes(p["Giải đấu"]);
+        const matchTeam   = selectedTeams.includes(p["Team"]);
+        const matchPos    = selectedPos.includes(p["Pos"]);
         return matchSearch && matchSeason && matchLeague && matchTeam && matchPos;
     });
 
     renderTable(filtered);
 }
-
 document.getElementById("searchPlayer").addEventListener("input", applyFilters);
 
 // =====================
 // RENDER TABLE
 // =====================
-function renderTable(data){
+function renderTable(data) {
     tableBody.innerHTML = "";
+    if (!data.length) return;
+    const hdrs = Object.keys(data[0]).slice(2);   // ← bỏ 2 cột đầu
     data.forEach(player => {
         const tr = document.createElement("tr");
-        tr.innerHTML = `
-<td>${player.Team}</td>
-<td>${player.Player}</td>
-<td>${player.Pos}</td>
-<td>${player.No}</td>
-<td>${player.Height}</td>
-<td>${player.Weight}</td>
-<td>${player.Age}</td>
-<td>${player.G}</td>
-<td>${player.OG}</td>
-<td>${player.PEN}</td>
-<td>${player.YC}</td>
-<td>${player.RC}</td>
-<td>${player.M}</td>
-<td>${player.A}</td>
-<td>${player.S}</td>
-<td>${player.SOT}</td>
-<td>${player.KP}</td>
-<td>${player.T}</td>
-<td>${player.INT}</td>
-<td>${player.G90}</td>
-<td>${player.A90}</td>
-<td>${player.S90}</td>
-`;
+        hdrs.forEach(h => {
+            const td = document.createElement("td");
+            td.textContent = player[h];
+            tr.appendChild(td);
+        });
         tr.addEventListener("click", () => showPlayerDetail(player));
         tableBody.appendChild(tr);
     });
@@ -316,62 +294,46 @@ function renderTable(data){
 // =====================
 // SORT
 // =====================
-const columnKeys = [
-"Team","Player","Pos","No",
-"Height","Weight","Age",
-"G","OG","PEN","YC","RC",
-"M","A","S","SOT","KP","T","INT",
-"G90","A90","S90"
-];
-
-const headers = table.querySelectorAll("thead th");
-
-headers.forEach((header, index) => {
-    if(index < 0) return;
-    header.style.cursor = "pointer";
-    header.addEventListener("click", () => {
-        const key = columnKeys[index];
-        players.sort((a,b) => {
-            let A = a[key];
-            let B = b[key];
-            if(A === "--" && B === "--") return 0;
-            if(A === "--") return 1;
-            if(B === "--") return -1;
-            if(!isNaN(A)) A = Number(A);
-            if(!isNaN(B)) B = Number(B);
-            if(A > B) return -sortDirection;
-            if(A < B) return sortDirection;
-            return 0;
+document.addEventListener("click", e => {
+    if (e.target.tagName === "TH") {
+        const key = e.target.textContent.trim();
+        players.sort((a, b) => {
+            let A = a[key], B = b[key];
+            if (A === "--" && B === "--") return 0;
+            if (A === "--") return 1;
+            if (B === "--") return -1;
+            if (!isNaN(A) && !isNaN(B)) { A = Number(A); B = Number(B); }
+            return A > B ? -sortDirection : A < B ? sortDirection : 0;
         });
         sortDirection *= -1;
         applyFilters();
-    });
+    }
 });
 
 // =====================
 // PLAYER DETAIL
 // =====================
-function showPlayerDetail(player){
+function showPlayerDetail(player) {
     alert(
-`Player: ${player.Player}
+`Player: ${player["Player"]}
 
-Team: ${player.Team}
-League: ${player.League}
-Season: ${player.Season}
-Position: ${player.Pos}
+Team: ${player["Team"]}
+League: ${player["Giải đấu"]}
+Season: ${player["Mùa giải"]}
+Position: ${player["Pos"]}
 
-Height: ${player.Height}
-Weight: ${player.Weight}
-Age: ${player.Age}
+Height: ${player["Cao (cm)"]}
+Weight: ${player["Nặng (kg)"]}
+Age: ${player["Tuổi"]}
 
-Goals: ${player.G}
-Assists: ${player.A}
+Goals: ${player["Goal (Bàn thắng)"]}
+Assists: ${player["A"]}
 
-Shots: ${player.S}
-Shots on Target: ${player.SOT}
+Shots: ${player["S"]}
+Shots on Target: ${player["SOT"]}
 
-Key Pass: ${player.KP}
-Tackles: ${player.T}
-Interceptions: ${player.INT}`
+Key Pass: ${player["KP"]}
+Tackles: ${player["T"]}
+Interceptions: ${player["INT"]}`
     );
 }
