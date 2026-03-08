@@ -298,8 +298,8 @@ border-radius:5px;
 /* ADVANCED STATS COLOR */
 /* ============================= */
 
-#statsTable th:nth-child(n+13),
-#statsTable td:nth-child(n+13){
+#statsTable th:nth-child(n+14),
+#statsTable td:nth-child(n+14){
 
 background:#eef2ff;
 color:#0f172a;
