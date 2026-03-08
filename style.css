@@ -96,7 +96,7 @@ white-space:nowrap;
 }
 
 /* ============================= */
-/* HEADER */
+/* HEADER (sticky top) */
 /* ============================= */
 
 #statsTable thead th{
@@ -104,22 +104,15 @@ background:#0f172a;
 color:white;
 padding:10px;
 font-weight:500;
-
 position:sticky;
 top:0;
-
 z-index:100;
 }
 
-#statsTable thead th:nth-child(1){
-left:0;
-z-index:110;
-}
-
-#statsTable thead th:nth-child(2){
-left:200px;
-z-index:109;
-}
+/* 3 cột sticky cần z-index cao hơn để không bị che khi scroll */
+#statsTable thead th:nth-child(1){ left:0;     z-index:113; }
+#statsTable thead th:nth-child(2){ left:120px; z-index:112; }
+#statsTable thead th:nth-child(3){ left:300px; z-index:111; }
 
 /* ============================= */
 /* BODY */
@@ -139,38 +132,48 @@ background:#e2e8f0;
 }
 
 /* ============================= */
-/* Team COLUMN */
+/* Cột 1 — Giải đấu */
 /* ============================= */
 
 #statsTable th:nth-child(1),
 #statsTable td:nth-child(1){
-
 position:sticky;
 left:0;
-min-width: 180px;
-max-width: 180px;
+min-width:100px;
+max-width:100px;
 background:#1D4586;
 color:white;
 z-index:50;
 }
 
 /* ============================= */
-/* Player COLUMN */
+/* Cột 2 — Team */
 /* ============================= */
 
 #statsTable th:nth-child(2),
 #statsTable td:nth-child(2){
-
 position:sticky;
-left:200px;
+left:120px;          /* = width cột 1 */
+min-width:160px;
+max-width:160px;
+background:#1a3a6b;
+color:white;
+z-index:49;
+}
 
-min-width:200px;
-max-width:220px;
+/* ============================= */
+/* Cột 3 — Player */
+/* ============================= */
 
+#statsTable th:nth-child(3),
+#statsTable td:nth-child(3){
+position:sticky;
+left:300px;          /* = width cột 1 + cột 2 */
+min-width:180px;
+max-width:180px;
 background:#285CA9;
 color:white;
-
-z-index:49;
+z-index:48;
 }
 
 /* ============================= */
@@ -178,7 +181,8 @@ z-index:49;
 /* ============================= */
 
 #statsTable tbody tr:hover td:nth-child(1),
-#statsTable tbody tr:hover td:nth-child(2){
+#statsTable tbody tr:hover td:nth-child(2),
+#statsTable tbody tr:hover td:nth-child(3){
 background:#2a3b57;
 color:white;
 }
